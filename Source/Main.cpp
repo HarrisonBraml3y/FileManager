@@ -27,26 +27,34 @@ public:
 	std::filesystem::path rootC{ "C:" }; 
 	std::filesystem::path exclusionPath =  rootC / "Windows" ;
 
-	std::string dirSearch(std::string inputDir) {
+	std::string Cut(std::string strToCut) {
+		std::size_t Result = strToCut.find_last_of("/\\");
 
+		return strToCut.substr(0, Result);
+	}
+
+	std::string dirSearch(std::string inputDir) {
 		std::cout << inputDir << std::endl;
-		for (const auto& entry : std::filesystem::directory_iterator(Desktop)){		//https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+		for(const auto& entry : std::filesystem::directory_iterator(Desktop)){		//https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 			std::cout << entry.path() << std::endl;
 		}
 		//add functionality to change properties of file specified by string input, removing file directory prefix from path to match string
 		return Desktop;
 	}
 
-	std::string fileSearch(std::string inputFile, std::string fileToMatch) {
+	std::string fileSearch(std::string fileToMatch) {
 		//for (const auto& entry : std::filesystem::directory_iterator(inputFile)) {
 		//	std::cout < entry.path() << std::endl;
 		//	for()
 		//}
 		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(rootC)) {
-			inputFile = entry.path().string();
-			if (std::filesystem::is_regular_file(entry.path()) && inputFile.find(exclusionPath.string())) {
-				std::cout << inputFile << std::endl;	//https://stackoverflow.com/questions/68460077/get-all-file-recursively-from-c
-				if (inputFile == fileToMatch) {
+			std::string filePath = entry.path().string();
+			if (std::filesystem::is_regular_file(entry.path()) && filePath.find(exclusionPath.string())) {
+
+				std::cout << Cut(filePath) << std::endl;
+
+				if (filePath == fileToMatch) {
+					//remove directory prefix
 					std::cout << fileToMatch << " found" << std::endl;
 				}
 			}
@@ -82,8 +90,9 @@ int main() {
 	Funcs.dirSearch(dirInput);
 	
 	std::string filePath;
-	std::cout << "File name: " << std::endl;
-	std::cin >> filePath;
-	Funcs.fileSearch(filePath);
+	std::string fileToMatch;
+	std::cout << "File name to search for: " << std::endl;
+	std::cin >> fileToMatch;
+	Funcs.fileSearch(fileToMatch);
 
 }
