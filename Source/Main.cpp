@@ -30,11 +30,17 @@ public:
 	std::string Cut(std::string strToCut) {
 		std::size_t Result = strToCut.find_last_of("/\\");
 
+
+		std::string Final = Result;
 		return strToCut.substr(0, Result);
+
+
+
+
 	}
 
 	std::string dirSearch(std::string inputDir) {
-		std::cout << inputDir << std::endl;
+		std::cout << "Searching... " <<  inputDir << std::endl;
 		for(const auto& entry : std::filesystem::directory_iterator(Desktop)){		//https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 			std::cout << entry.path() << std::endl;
 		}
@@ -43,24 +49,37 @@ public:
 	}
 
 	std::string fileSearch(std::string fileToMatch) {
+		std::string test = "C:x64\Debug\FileManager.vcxproj.FileListAbsolute.txt";
+		bool fileFound = false;
 		//for (const auto& entry : std::filesystem::directory_iterator(inputFile)) {
 		//	std::cout < entry.path() << std::endl;
 		//	for()
 		//}
 		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(rootC)) {
 			std::string filePath = entry.path().string();
+			std::filesystem::path test = filePath;
 			if (std::filesystem::is_regular_file(entry.path()) && filePath.find(exclusionPath.string())) {
 
-				std::cout << Cut(filePath) << std::endl;
+				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
+				//std::cout << filePath << std::endl;
+				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
+				//std::cout << test.remove_filename() << std::endl;
 
 				if (filePath == fileToMatch) {
 					//remove directory prefix
+					fileFound = true;
 					std::cout << fileToMatch << " found" << std::endl;
 				}
+				else {
+					fileFound = false;
+				}
 			}
+
 		}
 
-
+		if (fileFound == false) {
+			std::cout << "File not found" << std::endl;
+		}
 //		for (const auto& entry : std::filesystem::directory_iterator("C:\\")) {
 //			DrivesResult.push_back(entry.path());
 //			for (int i = 0; i < sizeof(DrivesResult); i++) {
