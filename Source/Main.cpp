@@ -24,15 +24,19 @@ public:
 	std::string Output;
 
 	std::string Desktop{ "C:\\Users\\harri\\Desktop" };
-	std::filesystem::path rootC{ "C:" }; 
+	std::filesystem::path rootC{ "C:\\Users" };
+	std::filesystem::path rootD{ "D:" };
 	std::filesystem::path exclusionPath =  rootC / "Windows" ;
+	std::string Images = "C:\\Users\\harri\\Desktop\\Images";
+
+	bool fileFound = false;
+
 
 	std::string Cut(std::string strToCut) {
-		std::size_t Result = strToCut.find_last_of("/\\");
+		std::size_t Result = strToCut.find_last_of("\\/");
+		std::string Final = strToCut.substr(strToCut.find_last_of("/\\") + 1);
 
-
-		std::string Final = Result;
-		return strToCut.substr(0, Result);
+		return Final;
 
 
 
@@ -48,36 +52,31 @@ public:
 		return Desktop;
 	}
 
-	std::string fileSearch(std::string fileToMatch) {
+	std::string fileSearch(std::filesystem::path fileToMatch) {
 		std::string test = "C:x64\Debug\FileManager.vcxproj.FileListAbsolute.txt";
-		bool fileFound = false;
 		//for (const auto& entry : std::filesystem::directory_iterator(inputFile)) {
 		//	std::cout < entry.path() << std::endl;
 		//	for()
 		//}
-		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(rootC)) {
+		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(Images)) {
 			std::string filePath = entry.path().string();
 			std::filesystem::path test = filePath;
 			if (std::filesystem::is_regular_file(entry.path()) && filePath.find(exclusionPath.string())) {
 
+				std::cout << filePath << std::endl;
 				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
-				//std::cout << filePath << std::endl;
 				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
 				//std::cout << test.remove_filename() << std::endl;
-
 				if (filePath == fileToMatch) {
 					//remove directory prefix
 					fileFound = true;
 					std::cout << fileToMatch << " found" << std::endl;
 				}
-				else {
-					fileFound = false;
-				}
 			}
 
 		}
 
-		if (fileFound == false) {
+		if(fileFound == false) {
 			std::cout << "File not found" << std::endl;
 		}
 //		for (const auto& entry : std::filesystem::directory_iterator("C:\\")) {
@@ -98,11 +97,28 @@ public:
 
 		return filePath;
 	}
+
+	std::string fileRename(std::string toRename, std::filesystem::path filePath) {
+		std::string newName;
+		std::cout << "Enter new file name..." << std::endl;
+		std::cin >> newName;
+		std::filesystem::rename(filePath/toRename, filePath/newName);
+
+
+
+
+	}
+
+
+
 	
 };
 
 Functions Funcs;
 int main() {
+	int fileEdit;
+	std::string newName;
+
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
 	std::cin >> dirInput;
@@ -113,5 +129,24 @@ int main() {
 	std::cout << "File name to search for: " << std::endl;
 	std::cin >> fileToMatch;
 	Funcs.fileSearch(fileToMatch);
+	if (Funcs.fileFound == true) {
+		std::cout << "Enter an interrelating number for a function from the list below:\n" "1. Rename\n";
+		std::cin >> fileEdit;
+	}
+
+
+
+
+	switch (fileEdit) {
+	case 1: 
+		std::cout << "Enter new file name" << std::endl;
+		std::cin >> newName;
+		Funcs.fileRename(Funcs.filePath, newName);
+		break;
+
+
+	}
+
+
 
 }
