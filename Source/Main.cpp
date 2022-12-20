@@ -21,6 +21,7 @@ protected:
 public:
 	std::vector<std::filesystem::path> DrivesResult;
 	std::string filePath;
+	std::string savedPath;
 	std::string Output;
 
 	std::string Desktop{ "C:\\Users\\harri\\Desktop" };
@@ -35,7 +36,7 @@ public:
 	std::string Cut(std::string strToCut) {
 		std::size_t Result = strToCut.find_last_of("\\/");
 		std::string Final = strToCut.substr(strToCut.find_last_of("/\\") + 1);
-
+		savedPath = strToCut.find_last_of("\\/");
 		return Final;
 
 
@@ -67,7 +68,7 @@ public:
 				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
 				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
 				//std::cout << test.remove_filename() << std::endl;
-				if (filePath == fileToMatch) {
+				if (Cut(filePath) == fileToMatch) {
 					//remove directory prefix
 					fileFound = true;
 					std::cout << fileToMatch << " found" << std::endl;
@@ -98,17 +99,20 @@ public:
 		return filePath;
 	}
 
-	std::string fileRename(std::string toRename, std::filesystem::path filePath) {
-		std::string newName;
-		std::cout << "Enter new file name..." << std::endl;
-		std::cin >> newName;
+	std::string fileRename(std::string toRename, std::filesystem::path filePath, std::string newName) {
+
 		std::filesystem::rename(filePath/toRename, filePath/newName);
 
 
 
-
+		return newName;
 	}
 
+	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir) {
+		//can be done using std::filesystem::rename, by renaming the filepath.  
+
+
+	}
 
 
 	
@@ -116,8 +120,9 @@ public:
 
 Functions Funcs;
 int main() {
-	int fileEdit;
+	int fileEdit{};
 	std::string newName;
+	std::string Input;
 
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
@@ -139,12 +144,16 @@ int main() {
 
 	switch (fileEdit) {
 	case 1: 
-		std::cout << "Enter new file name" << std::endl;
-		std::cin >> newName;
-		Funcs.fileRename(Funcs.filePath, newName);
+		std::cout << "Enter new file name..." << std::endl;		//remove
+		Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
+		std::cin >> Input;										//remove
+		newName = Funcs.savedPath + Input;						//move to Funcs.fileRename 
+		Funcs.fileRename(Funcs.filePath, Funcs.savedPath, newName); 
+		std::cout << "New file name: " << newName;
 		break;
 
-
+	default:
+		std::cout << "Unrecognised input" << std::endl;
 	}
 
 
