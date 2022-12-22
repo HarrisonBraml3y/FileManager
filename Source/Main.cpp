@@ -35,13 +35,17 @@ public:
 
 	std::string Cut(std::string strToCut) {
 		std::size_t Result = strToCut.find_last_of("\\/");
+		std::size_t lastIndex = strToCut.find_last_of(".");
 		std::string Final = strToCut.substr(strToCut.find_last_of("/\\") + 1);
+		std::string fullName = strToCut.substr(0, lastIndex);
 		savedPath = strToCut.find_last_of("\\/");
-		return Final;
+
+		std::size_t test = strToCut.find_last_of("\\/");
+		std::size_t test2 = strToCut.find_last_of(".");
+		std::string test3 = strToCut.substr(test, test2);
 
 
-
-
+		return test3;
 	}
 
 	std::string dirSearch(std::string inputDir) {
@@ -55,6 +59,7 @@ public:
 
 	std::string fileSearch(std::filesystem::path fileToMatch) {
 		std::string test = "C:x64\Debug\FileManager.vcxproj.FileListAbsolute.txt";
+
 		//for (const auto& entry : std::filesystem::directory_iterator(inputFile)) {
 		//	std::cout < entry.path() << std::endl;
 		//	for()
@@ -62,12 +67,15 @@ public:
 		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(Images)) {
 			std::string filePath = entry.path().string();
 			std::filesystem::path test = filePath;
+
 			if (std::filesystem::is_regular_file(entry.path()) && filePath.find(exclusionPath.string())) {
 
-				std::cout << filePath << std::endl;
+				std::cout << filePath << fileSize(filePath) <<  std::endl;
 				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
 				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
 				//std::cout << test.remove_filename() << std::endl;
+
+
 				if (Cut(filePath) == fileToMatch) {
 					//remove directory prefix
 					fileFound = true;
@@ -108,12 +116,34 @@ public:
 		return newName;
 	}
 
-	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir) {
+	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir) {		//seperating each directory into substrings per path directory. can be used for renaming each directory for moving a file
 		//can be done using std::filesystem::rename, by renaming the filepath.  
+		std::string subDir1;
+		std::string subDir2;
+		std::string subDir3;
+		
+		std::vector <std::string> subDirs;
+		std::vector <std::size_t> found;
+		//std::vector <std::size_t> found = oldDir.find("\\");
+		while (oldDir.find("\\")) {
+			found.push_back(oldDir.find("\\"));
+		}
+		for (int i{ 0 }; i < sizeof(found); i++) {
+			subDirs[i] = oldDir.substr(found[i], found[i+2] - found[i]);	//wrong, subDirs[i] should be the substring between found places.
+		}
+
+
+		std::filesystem::rename(oldDir, newDir);
+
+
 
 
 	}
 
+	int fileSize(std::filesystem::path path) {
+		std::cout << "        Size: " <<  std::filesystem::file_size(path) << std::endl;
+		return std::filesystem::file_size(path);
+	}
 
 	
 };
@@ -123,6 +153,7 @@ int main() {
 	int fileEdit{};
 	std::string newName;
 	std::string Input;
+	std::filesystem::path moveTo;
 
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
@@ -152,6 +183,11 @@ int main() {
 		std::cout << "New file name: " << newName;
 		break;
 
+	case 2:
+		std::cout << "Enter path of directory you would like to move the chosen file to" << std::endl;
+		std::cin >> moveTo;
+		//Funcs.moveFile();
+		break;
 	default:
 		std::cout << "Unrecognised input" << std::endl;
 	}
