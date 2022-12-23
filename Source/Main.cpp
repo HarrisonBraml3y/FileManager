@@ -21,7 +21,7 @@ protected:
 public:
 	std::vector<std::filesystem::path> DrivesResult;
 	std::string filePath;
-	std::string savedPath;
+	std::filesystem::path savedPath;
 	std::string Output;
 
 	std::string Desktop{ "C:\\Users\\harri\\Desktop" };
@@ -35,17 +35,13 @@ public:
 
 	std::string Cut(std::string strToCut) {
 		std::size_t Result = strToCut.find_last_of("\\/");
-		std::size_t lastIndex = strToCut.find_last_of(".");
 		std::string Final = strToCut.substr(strToCut.find_last_of("/\\") + 1);
-		std::string fullName = strToCut.substr(0, lastIndex);
-		savedPath = strToCut.find_last_of("\\/");
+		std::size_t lastIndex = Final.find_last_of(".");
+		std::string fullName = Final.substr(0, lastIndex);
+		std::size_t temp = strToCut.find_last_of("\\/");
+		savedPath = strToCut.substr(0, temp);
 
-		std::size_t test = strToCut.find_last_of("\\/");
-		std::size_t test2 = strToCut.find_last_of(".");
-		std::string test3 = strToCut.substr(test, test2);
-
-
-		return test3;
+		return fullName;
 	}
 
 	std::string dirSearch(std::string inputDir) {
@@ -72,6 +68,7 @@ public:
 
 				std::cout << filePath << fileSize(filePath) <<  std::endl;
 				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
+				std::cout << "path: " << savedPath;
 				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
 				//std::cout << test.remove_filename() << std::endl;
 
@@ -107,9 +104,13 @@ public:
 		return filePath;
 	}
 
-	std::string fileRename(std::string toRename, std::filesystem::path filePath, std::string newName) {
+	std::string fileRename(std::filesystem::path oldName, std::filesystem::path newName) {		//maybe change two parameters back to std::string
 
-		std::filesystem::rename(filePath/toRename, filePath/newName);
+		std::size_t Remove = oldName.find_last_of("\\/");
+		std::string Prefix = oldName.substr(0, Remove);
+		filePath = oldName.substr(0, Remove);
+		
+		std::filesystem::rename(savedPath/oldName, savedPath/newName);
 
 
 
@@ -151,8 +152,9 @@ public:
 Functions Funcs;
 int main() {
 	int fileEdit{};
-	std::string newName;
+	std::filesystem::path newName;
 	std::string Input;
+	std::filesystem::path inputPath;
 	std::filesystem::path moveTo;
 
 	std::string dirInput;
@@ -171,15 +173,17 @@ int main() {
 	}
 
 
-
+	
+	//find matching file path to fileToMatch, pass as argument to Funcs.fileRename
 
 	switch (fileEdit) {
 	case 1: 
 		std::cout << "Enter new file name..." << std::endl;		//remove
-		Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
-		std::cin >> Input;										//remove
-		newName = Funcs.savedPath + Input;						//move to Funcs.fileRename 
-		Funcs.fileRename(Funcs.filePath, Funcs.savedPath, newName); 
+		//Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
+		std::cin >> Input;			//remove
+
+		newName = Funcs.savedPath / Input;						//move to Funcs.fileRename 
+		Funcs.fileRename(Funcs.savedPath, newName); 
 		std::cout << "New file name: " << newName;
 		break;
 
