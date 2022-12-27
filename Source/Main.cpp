@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <filesystem>
-
+#include <format>
 
 
 
@@ -21,7 +21,7 @@ protected:
 public:
 	std::vector<std::filesystem::path> DrivesResult;
 	std::string filePath;
-	std::filesystem::path savedPath;
+	std::filesystem::path savedPath = u8"C:\\Users\\harri\\Desktop\\Images\\preview" ;
 	std::string Output;
 
 	std::string Desktop{ "C:\\Users\\harri\\Desktop" };
@@ -29,7 +29,6 @@ public:
 	std::filesystem::path rootD{ "D:" };
 	std::filesystem::path exclusionPath =  rootC / "Windows" ;
 	std::string Images = "C:\\Users\\harri\\Desktop\\Images";
-
 	bool fileFound = false;
 
 
@@ -39,7 +38,7 @@ public:
 		std::size_t lastIndex = Final.find_last_of(".");
 		std::string fullName = Final.substr(0, lastIndex);
 		std::size_t temp = strToCut.find_last_of("\\/");
-		savedPath = strToCut.substr(0, temp);
+		//savedPath = strToCut.substr(0, temp);
 
 		return fullName;
 	}
@@ -104,17 +103,42 @@ public:
 		return filePath;
 	}
 
-	std::string fileRename(std::filesystem::path oldName, std::filesystem::path newName) {		//maybe change two parameters back to std::string
+	std::filesystem::path fileRename(std::filesystem::path oldName, std::filesystem::path newName) {		//function causing error at memory location 0x00000029E25FEB00
 
-		std::size_t Remove = oldName.find_last_of("\\/");
-		std::string Prefix = oldName.substr(0, Remove);
-		filePath = oldName.substr(0, Remove);
+		std::string oldNamePath = oldName.generic_string();
+
+
+		std::size_t Remove = oldNamePath.find_last_of("\\/");
+		std::string Prefix = oldNamePath.substr(0, Remove);
+		filePath = oldNamePath.substr(0, Remove);
+
+		std::cout << "Old name: " << savedPath << std::endl;
 		
+
 		std::filesystem::rename(savedPath/oldName, savedPath/newName);
 
 
 
+
 		return newName;
+	}
+	std::string Rename(std::string newName) {
+		std::string Prefix;
+		std::string Suffix = ".jpg";
+		std::string inputName;
+
+
+		std::string savedPathString = savedPath.string();
+		std::string test{ "test" };
+		std::string finalName = std::format("{}{}{}", savedPathString, newName, Suffix);
+
+		std::filesystem::rename(filePath.c_str(), finalName.c_str());
+
+		
+
+
+
+		return finalName;
 	}
 
 	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir) {		//seperating each directory into substrings per path directory. can be used for renaming each directory for moving a file
@@ -156,6 +180,7 @@ int main() {
 	std::string Input;
 	std::filesystem::path inputPath;
 	std::filesystem::path moveTo;
+	std::string Renamed;
 
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
@@ -182,15 +207,16 @@ int main() {
 		//Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
 		std::cin >> Input;			//remove
 
-		newName = Funcs.savedPath / Input;						//move to Funcs.fileRename 
-		Funcs.fileRename(Funcs.savedPath, newName); 
-		std::cout << "New file name: " << newName;
+		newName = Funcs.savedPath / Input;	//move to Funcs.fileRename 
+		Renamed = Funcs.Rename(Input);
+		//Funcs.fileRename(Funcs.savedPath, Input); 
+		std::cout << "New file name: " << Renamed << std::endl;
 		break;
 
 	case 2:
 		std::cout << "Enter path of directory you would like to move the chosen file to" << std::endl;
 		std::cin >> moveTo;
-		//Funcs.moveFile();
+		//Funcs.moveFile(); 
 		break;
 	default:
 		std::cout << "Unrecognised input" << std::endl;
