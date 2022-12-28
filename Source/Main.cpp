@@ -21,24 +21,24 @@ protected:
 public:
 	std::vector<std::filesystem::path> DrivesResult;
 	std::string filePath;
-	std::filesystem::path savedPath = u8"C:\\Users\\harri\\Desktop\\Images\\preview" ;
+	std::filesystem::path savedPath{ "C:\\Users\\harri\\Desktop\\Images\\preview" };	//should be the path of the file found with matching name
 	std::string Output;
 
 	std::string Desktop{ "C:\\Users\\harri\\Desktop" };
 	std::filesystem::path rootC{ "C:\\Users" };
 	std::filesystem::path rootD{ "D:" };
-	std::filesystem::path exclusionPath =  rootC / "Windows" ;
-	std::string Images = "C:\\Users\\harri\\Desktop\\Images";
-	bool fileFound = false;
+	std::filesystem::path exclusionPath{ rootC / "Windows" };
+	std::string Images{ "C:\\Users\\harri\\Desktop\\Images" };
+	bool fileFound{ false };
 
 
 	std::string Cut(std::string strToCut) {
-		std::size_t Result = strToCut.find_last_of("\\/");
-		std::string Final = strToCut.substr(strToCut.find_last_of("/\\") + 1);
-		std::size_t lastIndex = Final.find_last_of(".");
-		std::string fullName = Final.substr(0, lastIndex);
-		std::size_t temp = strToCut.find_last_of("\\/");
-		//savedPath = strToCut.substr(0, temp);
+		std::size_t Result{ strToCut.find_last_of("\\/") };
+		std::string Final{ strToCut.substr(strToCut.find_last_of("/\\") + 1) };
+		std::size_t lastIndex{ Final.find_last_of(".") };
+		std::string fullName{ Final.substr(0, lastIndex) };
+		std::size_t temp{ strToCut.find_last_of("\\/") };
+		savedPath = strToCut.substr(0, temp+1);
 
 		return fullName;
 	}
@@ -53,12 +53,6 @@ public:
 	}
 
 	std::string fileSearch(std::filesystem::path fileToMatch) {
-		std::string test = "C:x64\Debug\FileManager.vcxproj.FileListAbsolute.txt";
-
-		//for (const auto& entry : std::filesystem::directory_iterator(inputFile)) {
-		//	std::cout < entry.path() << std::endl;
-		//	for()
-		//}
 		for (std::filesystem::directory_entry entry : std::filesystem::recursive_directory_iterator(Images)) {
 			std::string filePath = entry.path().string();
 			std::filesystem::path test = filePath;
@@ -66,8 +60,8 @@ public:
 			if (std::filesystem::is_regular_file(entry.path()) && filePath.find(exclusionPath.string())) {
 
 				std::cout << filePath << fileSize(filePath) <<  std::endl;
-				std::cout << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
-				std::cout << "path: " << savedPath;
+				std::cout << "Name: " << Cut(filePath) << std::endl;	//removes the file name, should remove file path and keep only the name.
+				std::cout << "Path: " << savedPath << std::endl;
 				//std::cout << test.substr(0, test.find_last_of("\\/")) << std::endl;
 				//std::cout << test.remove_filename() << std::endl;
 
@@ -122,23 +116,27 @@ public:
 
 		return newName;
 	}
-	std::string Rename(std::string newName) {
+	std::string Rename(std::string inputName) {
 		std::string Prefix;
 		std::string Suffix = ".jpg";
-		std::string inputName;
 
 
 		std::string savedPathString = savedPath.string();
-		std::string test{ "test" };
-		std::string finalName = std::format("{}{}{}", savedPathString, newName, Suffix);
 
-		std::filesystem::rename(filePath.c_str(), finalName.c_str());
+		std::string newPath = std::format("{}{}{}", savedPathString, inputName, Suffix);
+		std::cout << "newPath string: " << newPath << std::endl;
 
-		
+		if (std::filesystem::exists(savedPath)) {
+			std::cout << "Renaming..." << std::endl;
+			std::filesystem::rename(std::string(savedPathString), std::string(newPath));	//error here //rename arguments must be of type filesystem::path
+			std::cout << "Renamed" << std::endl;
+		}
+		else {
+			std::cout << "File path doesn't exist." << std::endl;
+		}
 
 
-
-		return finalName;
+		return newPath;
 	}
 
 	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir) {		//seperating each directory into substrings per path directory. can be used for renaming each directory for moving a file
@@ -180,7 +178,7 @@ int main() {
 	std::string Input;
 	std::filesystem::path inputPath;
 	std::filesystem::path moveTo;
-	std::string Renamed;
+	std::filesystem::path Renamed;
 
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
@@ -193,7 +191,7 @@ int main() {
 	std::cin >> fileToMatch;
 	Funcs.fileSearch(fileToMatch);
 	if (Funcs.fileFound == true) {
-		std::cout << "Enter an interrelating number for a function from the list below:\n" "1. Rename\n";
+		std::cout << "Enter the number preceeding the function you would like to execute from the lite below:\n" "1. Rename\n";
 		std::cin >> fileEdit;
 	}
 
@@ -207,7 +205,7 @@ int main() {
 		//Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
 		std::cin >> Input;			//remove
 
-		newName = Funcs.savedPath / Input;	//move to Funcs.fileRename 
+		//newName = Funcs.savedPath / Input;	//move to Funcs.fileRename 
 		Renamed = Funcs.Rename(Input);
 		//Funcs.fileRename(Funcs.savedPath, Input); 
 		std::cout << "New file name: " << Renamed << std::endl;
