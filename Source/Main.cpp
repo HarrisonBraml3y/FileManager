@@ -8,6 +8,7 @@
 
 
 
+
 //|/-\|
 
 //first function, enter file name and search directory for the file
@@ -42,6 +43,30 @@ public:
 
 		return fullName;
 	}
+
+
+	void Search(std::string Directory, std::string Name) {
+
+
+		std::string Dir{ ".\\" };
+		
+		for (auto& file : std::filesystem::directory_iterator(Dir)) {
+			if (file.path().filename() == Name) {
+				std::cout << "Found " << file.path() << std::endl;
+
+				return;
+			}
+			else {
+				//recursively search other directories
+				Search(file.path().string(), Name);
+			}
+		}
+
+
+
+	}
+
+
 
 	std::string dirSearch(std::string inputDir) {
 		std::cout << "Searching... " <<  inputDir << std::endl;
@@ -173,12 +198,20 @@ public:
 
 Functions Funcs;
 int main() {
+	int Instruction{};
 	int fileEdit{};
 	std::filesystem::path newName;
 	std::string Input;
 	std::filesystem::path inputPath;
 	std::filesystem::path moveTo;
 	std::filesystem::path Renamed;
+
+	std::string filepathFound;
+
+	std::cout << "Menu" << std::endl;
+	std::cout << "1| File search.\n" << "2| " << std::endl;
+	std::cin >> Instruction;
+
 
 	std::string dirInput;
 	std::cout << "File Directory..." "\n";
@@ -198,6 +231,19 @@ int main() {
 
 	
 	//find matching file path to fileToMatch, pass as argument to Funcs.fileRename
+	switch (Instruction) {
+	case 1:
+		std::string fileName{};
+		std::cout << "Enter the name of the file you are looking for..." << std::endl;
+		std::cin >> fileName;
+		Funcs.Search("C:\\", fileName);
+
+
+		break;
+		
+	}
+
+
 
 	switch (fileEdit) {
 	case 1: 
