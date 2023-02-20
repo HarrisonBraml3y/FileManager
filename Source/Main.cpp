@@ -48,22 +48,19 @@ public:
 	void Search(std::string Directory, std::string Name) {
 
 
-		std::string Dir{ ".\\" };
-		
-		for (auto& file : std::filesystem::directory_iterator(Dir)) {
+		for (auto& file : std::filesystem::directory_iterator(Directory)) {
 			if (file.path().filename() == Name) {
 				std::cout << "Found " << file.path() << std::endl;
 
 				return;
 			}
-			else {
-				//recursively search other directories
+			else if(file.is_directory()) {						//concern that the program will direct to the folder, then not exit the folder and look for next. 
+				std::cout << "Searching " << file.path() << "..." << std::endl;
+				std::cout << file.path() << "Failed" << std::endl;
 				Search(file.path().string(), Name);
+
 			}
 		}
-
-
-
 	}
 
 
@@ -208,63 +205,64 @@ int main() {
 
 	std::string filepathFound;
 
+	std::string fileName{};
 	std::cout << "Menu" << std::endl;
 	std::cout << "1| File search.\n" << "2| " << std::endl;
 	std::cin >> Instruction;
 
 
-	std::string dirInput;
-	std::cout << "File Directory..." "\n";
-	std::cin >> dirInput;
-	Funcs.dirSearch(dirInput);
-	
-	std::string filePath;
-	std::string fileToMatch;
-	std::cout << "File name to search for: " << std::endl;
-	std::cin >> fileToMatch;
-	Funcs.fileSearch(fileToMatch);
-	if (Funcs.fileFound == true) {
-		std::cout << "Enter the number preceeding the function you would like to execute from the lite below:\n" "1. Rename\n";
-		std::cin >> fileEdit;
-	}
+//	std::string dirInput;
+//	std::cout << "File Directory..." "\n";
+//	std::cin >> dirInput;
+//	Funcs.dirSearch(dirInput);
+//	
+//	std::string filePath;
+//	std::string fileToMatch;
+//	std::cout << "File name to search for: " << std::endl;
+//	std::cin >> fileToMatch;
+//	Funcs.fileSearch(fileToMatch);
+//	if (Funcs.fileFound == true) {
+//		std::cout << "Enter the number preceeding the function you would like to execute from the lite below:\n" "1. Rename\n";
+//		std::cin >> fileEdit;
+//	}
 
 
 	
 	//find matching file path to fileToMatch, pass as argument to Funcs.fileRename
 	switch (Instruction) {
 	case 1:
-		std::string fileName{};
 		std::cout << "Enter the name of the file you are looking for..." << std::endl;
 		std::cin >> fileName;
-		Funcs.Search("C:\\", fileName);
+		Funcs.Search("C:\\Users\\harri\\Desktop\\Recursive test", fileName);
 
 
-		break;
-		
-	}
-
-
-
-	switch (fileEdit) {
-	case 1: 
-		std::cout << "Enter new file name..." << std::endl;		//remove
-		//Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
-		std::cin >> Input;			//remove
-
-		//newName = Funcs.savedPath / Input;	//move to Funcs.fileRename 
-		Renamed = Funcs.Rename(Input);
-		//Funcs.fileRename(Funcs.savedPath, Input); 
-		std::cout << "New file name: " << Renamed << std::endl;
-		break;
-
-	case 2:
-		std::cout << "Enter path of directory you would like to move the chosen file to" << std::endl;
-		std::cin >> moveTo;
-		//Funcs.moveFile(); 
 		break;
 	default:
 		std::cout << "Unrecognised input" << std::endl;
 	}
+
+
+
+//	switch (fileEdit) {
+//	case 1: 
+//		std::cout << "Enter new file name..." << std::endl;		//remove
+//		//Funcs.savedPath = "C:\\Users\\harri\\Desktop\\Images\\";
+//		std::cin >> Input;			//remove
+//
+//		//newName = Funcs.savedPath / Input;	//move to Funcs.fileRename 
+//		Renamed = Funcs.Rename(Input);
+//		//Funcs.fileRename(Funcs.savedPath, Input); 
+//		std::cout << "New file name: " << Renamed << std::endl;
+//		break;
+//
+//	case 2:
+//		std::cout << "Enter path of directory you would like to move the chosen file to" << std::endl;
+//		std::cin >> moveTo;
+//		//Funcs.moveFile(); 
+//		break;
+//	default:
+//		std::cout << "Unrecognised input" << std::endl;
+//	}
 
 
 
