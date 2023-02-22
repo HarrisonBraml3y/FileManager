@@ -86,6 +86,21 @@ public:
 		}
 	}
 
+	void ListContents(std::filesystem::path Directory) {
+		
+
+
+		while (true) {
+			for (auto current : std::filesystem::directory_iterator(Directory)) {
+				std::string Path = current.path().string();
+				std::cout << Cut(Path) << std::endl;
+			}
+			break;
+		}
+
+		
+	}
+
 
 
 	std::string dirSearch(std::string inputDir) {
@@ -228,11 +243,12 @@ int main() {
 
 	std::string filepathFound;
 
+	std::filesystem::path dirInput;
 	std::string fileName{};
 	std::cout << "Menu" << std::endl;
-	std::cout << "1| File search.\n" << "2| Insert file" << std::endl;
+	std::cout << "1| File search.\n" << "2| List contents of directory" << std::endl;
 	std::cin >> Instruction;
-
+	
 
 //	std::string dirInput;
 //	std::cout << "File Directory..." "\n";
@@ -259,7 +275,9 @@ int main() {
 		Funcs.Search("C:\\Users\\harri\\Desktop\\Recursive test", fileName);
 
 	case 2:
-		
+		std::cout << "Enter directory" << std::endl;
+		std::cin >> dirInput;
+		Funcs.ListContents(dirInput);
 
 
 		break;
