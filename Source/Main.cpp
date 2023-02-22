@@ -41,6 +41,7 @@ public:
 		std::size_t temp{ strToCut.find_last_of("\\/") };
 		savedPath = strToCut.substr(0, temp+1);
 
+
 		return fullName;
 	}
 
@@ -52,7 +53,16 @@ public:
 			if (file.path().filename() == Name) {
 				std::cout << "Found " << file.path() << std::endl;
 
-				return;
+				std::cout << "Properties|\n" "Size(bytes)" << std::filesystem::file_size(file) << std::endl;
+				std::cout << "Last modified" << std::filesystem::last_write_time(file) << std::endl;
+
+				std::filesystem::path Path = file.path();
+				std::string Extension = Path.extension().string();
+				std::cout << "File type" << Extension << std::endl;
+
+				
+
+				return; //return file properties
 			}
 			else if(file.is_directory()) {						//concern that the program will direct to the folder, then not exit the folder and look for next. 
 				std::cout << "Searching " << file.path() << "..." << std::endl;
@@ -60,6 +70,19 @@ public:
 				Search(file.path().string(), Name);
 
 			}
+		}
+	}
+
+	void NewDirectory(std::string Prefix, std::string Name) {
+		std::string Directory = Prefix + Name;
+
+		if (std::filesystem::exists(Prefix)) {
+			std::filesystem::create_directory(Directory);
+			return;
+		}
+		else {
+			std::cout << "Specified directory does not exist." << std::endl;
+			return;
 		}
 	}
 
@@ -207,7 +230,7 @@ int main() {
 
 	std::string fileName{};
 	std::cout << "Menu" << std::endl;
-	std::cout << "1| File search.\n" << "2| " << std::endl;
+	std::cout << "1| File search.\n" << "2| Insert file" << std::endl;
 	std::cin >> Instruction;
 
 
@@ -234,6 +257,9 @@ int main() {
 		std::cout << "Enter the name of the file you are looking for..." << std::endl;
 		std::cin >> fileName;
 		Funcs.Search("C:\\Users\\harri\\Desktop\\Recursive test", fileName);
+
+	case 2:
+		
 
 
 		break;
