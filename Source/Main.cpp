@@ -45,14 +45,13 @@ public:
 		return fullName;
 	}
 
-
+	
 	void Search(std::string Directory, std::string Name) {
 
 
 		for (auto& file : std::filesystem::directory_iterator(Directory)) {
 			if (file.path().filename() == Name) {
 				std::cout << "Found " << file.path() << std::endl;
-
 				std::cout << "Properties|\n" "Size(bytes)" << std::filesystem::file_size(file) << std::endl;
 				std::cout << "Last modified" << std::filesystem::last_write_time(file) << std::endl;
 
@@ -60,14 +59,13 @@ public:
 				std::string Extension = Path.extension().string();
 				std::cout << "File type" << Extension << std::endl;
 
-				
-
-				return; //return file properties
+				break;
+				 //return file properties
 			}
-			else if(file.is_directory()) {						//concern that the program will direct to the folder, then not exit the folder and look for next. 
-				std::cout << "Searching " << file.path() << "..." << std::endl;
-				std::cout << file.path() << "Failed" << std::endl;
-				Search(file.path().string(), Name);
+			if (file.is_directory()) {	//concern that the program will direct to the folder, then not exit the folder and look for next. 
+			std::cout << "Searching " << file.path() << "..." << std::endl;
+			std::cout << file.path() << "Failed" << std::endl;
+			Search(file.path().string(), Name);
 
 			}
 		}
@@ -160,19 +158,13 @@ public:
 	std::filesystem::path fileRename(std::filesystem::path oldName, std::filesystem::path newName) {		//function causing error at memory location 0x00000029E25FEB00
 
 		std::string oldNamePath = oldName.generic_string();
-
-
 		std::size_t Remove = oldNamePath.find_last_of("\\/");
 		std::string Prefix = oldNamePath.substr(0, Remove);
 		filePath = oldNamePath.substr(0, Remove);
 
 		std::cout << "Old name: " << savedPath << std::endl;
 		
-
 		std::filesystem::rename(savedPath/oldName, savedPath/newName);
-
-
-
 
 		return newName;
 	}
@@ -195,7 +187,6 @@ public:
 			std::cout << "File path doesn't exist." << std::endl;
 		}
 
-
 		return newPath;
 	}
 
@@ -214,21 +205,13 @@ public:
 		for (int i{ 0 }; i < sizeof(found); i++) {
 			subDirs[i] = oldDir.substr(found[i], found[i+2] - found[i]);	//wrong, subDirs[i] should be the substring between found places.
 		}
-
-
 		std::filesystem::rename(oldDir, newDir);
-
-
-
-
 	}
 
 	int fileSize(std::filesystem::path path) {
 		std::cout << "        Size: " <<  std::filesystem::file_size(path) << std::endl;
 		return std::filesystem::file_size(path);
 	}
-
-	
 };
 
 Functions Funcs;
@@ -248,31 +231,13 @@ int main() {
 	std::cout << "Menu" << std::endl;
 	std::cout << "1| File search.\n" << "2| List contents of directory" << std::endl;
 	std::cin >> Instruction;
-	
 
-//	std::string dirInput;
-//	std::cout << "File Directory..." "\n";
-//	std::cin >> dirInput;
-//	Funcs.dirSearch(dirInput);
-//	
-//	std::string filePath;
-//	std::string fileToMatch;
-//	std::cout << "File name to search for: " << std::endl;
-//	std::cin >> fileToMatch;
-//	Funcs.fileSearch(fileToMatch);
-//	if (Funcs.fileFound == true) {
-//		std::cout << "Enter the number preceeding the function you would like to execute from the lite below:\n" "1. Rename\n";
-//		std::cin >> fileEdit;
-//	}
-
-
-	
 	//find matching file path to fileToMatch, pass as argument to Funcs.fileRename
 	switch (Instruction) {
 	case 1:
 		std::cout << "Enter the name of the file you are looking for..." << std::endl;
 		std::cin >> fileName;
-		Funcs.Search("C:\\Users\\harri\\Desktop\\Recursive test", fileName);
+		Funcs.Search("C:\\Users\\harri\\Desktop", fileName);
 
 	case 2:
 		std::cout << "Enter directory" << std::endl;
