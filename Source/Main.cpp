@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <format>
-
+#include <conio.h>
 
 
 
@@ -14,7 +14,8 @@
 //first function, enter file name and search directory for the file
 
 
-
+#define KEY_LEFT 77
+#define KEY_RIGHT 75
 
 class Functions {
 private:
@@ -46,9 +47,67 @@ public:
 	}
 
 	
+	void OpenFile(std::string Directory) {
+		if (std::filesystem::exists(Directory)) {
+			std::ifstream(Directory);
+
+
+
+		}
+		else {
+			std::cout << "File not found" << std::endl;
+			return;
+		}
+
+	}
+
+	void DeleteFile(std::filesystem::directory_entry Directory) {		//ADD SAFETY CHECK <CONFIRM> or <NO>
+		std::string Choices[] = { "Yes", "No" };
+		int Choice = 0;
+		bool Selecting = true;
+		bool Updated = false;
+		std::cout << "Are you certain?" << std::endl;
+		std::cout << "No" << "		" << "Yes" << std::endl;
+		char c;
+		while (Selecting = true) {
+			switch ((c = _getch())) {
+			case KEY_LEFT:
+				if (Choice > 0) {
+					Choice = 0;
+					Updated = true;
+					std::cout << "\rNo" << "		" << "<Yes>" << std::endl;
+
+				}
+				break;
+			case KEY_RIGHT:
+				if (Choice < 1) {
+					Choice = 1;
+					Updated = true;
+					std::cout << "\r<No>" << "		" << "Yes" << std::endl;
+
+
+				}
+			}
+
+		}
+
+
+		if (std::filesystem::exists(Directory)) {
+			std::filesystem::remove(Directory);
+			std::cout << "		Removed." << std::endl;
+
+		}
+		else {
+			std::cout << "File not found" << std::endl;
+			return;
+		}
+
+	}
+
 	void Search(std::string Directory, std::string Name) {
-
-
+		std::string FullDirectory;
+		int Input;
+		std::string InputString;
 		for (auto& file : std::filesystem::directory_iterator(Directory)) {
 			if (file.path().filename() == Name) {
 				std::cout << "Found " << file.path() << std::endl;
@@ -58,6 +117,29 @@ public:
 				std::filesystem::path Path = file.path();
 				std::string Extension = Path.extension().string();
 				std::cout << "File type" << Extension << std::endl;
+
+				std::cout << "\nActions|\n 1. Open\n 2. Rename\n 3. Delete\n " << std::endl;
+				std::cin >> Input;
+				
+				switch (Input) {
+				case 1: OpenFile(Directory);//Open function
+					break;
+
+				case 2: 
+					std::cout << "Enter new name" << std::endl;
+					std::cin >> InputString;
+					fileRename(Directory, InputString);//Rename function
+
+					break;
+
+				case 3: DeleteFile(file);//Delete function
+
+					break;
+				default: 
+					std::cout << "Invalid input" << std::endl;
+					break;
+				}
+
 
 				break;
 				 //return file properties
@@ -155,7 +237,7 @@ public:
 		return filePath;
 	}
 
-	std::filesystem::path fileRename(std::filesystem::path oldName, std::filesystem::path newName) {		//function causing error at memory location 0x00000029E25FEB00
+	std::filesystem::path fileRename(std::filesystem::path oldName, std::string newName) {		//function causing error at memory location 0x00000029E25FEB00
 
 		std::string oldNamePath = oldName.generic_string();
 		std::size_t Remove = oldNamePath.find_last_of("\\/");
@@ -165,9 +247,11 @@ public:
 		std::cout << "Old name: " << savedPath << std::endl;
 		
 		std::filesystem::rename(savedPath/oldName, savedPath/newName);
+		std::filesystem::rename(oldName, newName);	//oldName and newName should share the same file path, but with a different name. 
 
 		return newName;
 	}
+
 	std::string Rename(std::string inputName) {
 		std::string Prefix;
 		std::string Suffix = ".jpg";
@@ -239,6 +323,7 @@ int main() {
 		std::cin >> fileName;
 		Funcs.Search("C:\\Users\\harri\\Desktop", fileName);
 
+		break;
 	case 2:
 		std::cout << "Enter directory" << std::endl;
 		std::cin >> dirInput;
