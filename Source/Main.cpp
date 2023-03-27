@@ -14,8 +14,9 @@
 //first function, enter file name and search directory for the file
 
 
-#define KEY_LEFT 77
-#define KEY_RIGHT 75
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+#define KEY_ENTER 13
 
 class Functions {
 private:
@@ -65,43 +66,63 @@ public:
 		std::string Choices[] = { "Yes", "No" };
 		int Choice = 0;
 		bool Selecting = true;
-		bool Updated = false;
+		bool Update = false;
 		std::cout << "Are you certain?" << std::endl;
-		std::cout << "No" << "		" << "Yes" << std::endl;
+		std::cout << "No" << "		" << "Yes" << "\r";
 		char c;
 		while (Selecting = true) {
+			if (Update = true) {
+				std::cout << "\r";
+				if (Choice == 0) {
+
+					std::cout << "<No>" << "		" << "Yes" << "\r";
+				}
+				if(Choice == 1) {
+					
+					std::cout << "No" << "		" << "<Yes>" << "\r";
+				}
+				Update = false;
+			}
+
 			switch ((c = _getch())) {
 			case KEY_LEFT:
 				if (Choice > 0) {
 					Choice = 0;
-					Updated = true;
-					std::cout << "\rNo" << "		" << "<Yes>" << std::endl;
+					Update = true;
 
+//					if (KEY_ENTER) {
+//						std::cout << "Operation cancelled" << std::endl;
+//						break;
+//					}
 				}
 				break;
 			case KEY_RIGHT:
 				if (Choice < 1) {
 					Choice = 1;
-					Updated = true;
-					std::cout << "\r<No>" << "		" << "Yes" << std::endl;
+					Update = true;
 
 
+					break;
+
+			case KEY_ENTER:
+				if (Choice == 0) {
+					std::cout << "Operation cancelled" << std::endl;
+					break;
+					}
+					else{
+						if (std::filesystem::exists(Directory)) {
+							std::filesystem::remove(Directory);
+							std::cout << "		Removed." << std::endl;
+						}
+						else {
+							std::cout << "File not found" << std::endl;
+							return;
+						}
+					}
 				}
 			}
 
 		}
-
-
-		if (std::filesystem::exists(Directory)) {
-			std::filesystem::remove(Directory);
-			std::cout << "		Removed." << std::endl;
-
-		}
-		else {
-			std::cout << "File not found" << std::endl;
-			return;
-		}
-
 	}
 
 	void Search(std::string Directory, std::string Name) {
