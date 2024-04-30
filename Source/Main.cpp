@@ -1,5 +1,5 @@
 #include <iostream>
- #include <fstream>
+#include <fstream>
 #include <string>
 #include <algorithm>
 #include <filesystem>
@@ -75,11 +75,11 @@ public:
 				std::cout << "\r";
 				if (Choice == 0) {
 
-					std::cout << "<No>" << "		" << "Yes" << "\r";
+					std::cout << "<No>" << "        " << "Yes" << "\r";
 				}
 				if(Choice == 1) {
 					
-					std::cout << "No" << "		" << "<Yes>" << "\r";
+					std::cout << "No" << "        " << "<Yes>" << "\r";
 				}
 				Update = false;
 			}

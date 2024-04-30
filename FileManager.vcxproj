@@ -143,9 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\FileExplore.cpp" />
     <ClCompile Include="Source\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\FileExplore.h" />
     <ClInclude Include="Source\InputHandler.h" />
     <ClInclude Include="Source\Operations.h" />
   </ItemGroup>
