@@ -33,9 +33,9 @@ protected:
 public:
 
 	std::string Cut(std::string strToCut);
-	void OpenFile(std::string Directory);
+	void OpenFile(std::filesystem::path Directory);
 	void DeleteFile(std::filesystem::directory_entry Directory);
-	void Search(std::string Directory, std::string Name);
+	void Search(std::filesystem::path& Directory, std::string& Name);
 	void NewDirectory(std::string Prefix, std::string Name);
 	void ListContents(std::filesystem::path Directory);
 	std::string dirSearch(std::string inputDir);

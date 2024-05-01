@@ -17,7 +17,7 @@ std::string Explore::Cut(std::string strToCut) {
 	return fullName;
 }
 
-void Explore::OpenFile(std::string Directory) {
+void Explore::OpenFile(std::filesystem::path Directory) {
 	if (std::filesystem::exists(Directory)) {
 		std::ifstream(Directory);
 
@@ -94,17 +94,17 @@ void Explore::DeleteFile(std::filesystem::directory_entry Directory) {		//ADD SA
 	}
 }
 
-void Explore::Search(std::string Directory, std::string Name) {
+void Explore::Search(std::filesystem::path& Directory, std::string& Name) {
 	std::string FullDirectory;
 	int Input;
 	std::string InputString;
-	for (auto& file : std::filesystem::directory_iterator(Directory)) {
-		if (file.path().filename() == Name) {
-			std::cout << "Found " << file.path() << std::endl;
-			std::cout << "Properties|\n" "Size(bytes)" << std::filesystem::file_size(file) << std::endl;
-			std::cout << "Last modified" << std::filesystem::last_write_time(file) << std::endl;
+	for (auto& File : std::filesystem::directory_iterator(Directory)) {
+		if (File.path().filename() == Name) {
+			std::cout << "Found " << File.path() << std::endl;
+			std::cout << "Properties|\n" "Size(bytes)" << std::filesystem::file_size(File) << std::endl;
+			std::cout << "Last modified" << std::filesystem::last_write_time(File) << std::endl;
 
-			std::filesystem::path Path = file.path();
+			std::filesystem::path Path = File.path();
 			std::string Extension = Path.extension().string();
 			std::cout << "File type" << Extension << std::endl;
 
@@ -122,7 +122,7 @@ void Explore::Search(std::string Directory, std::string Name) {
 
 				break;
 
-			case 3: DeleteFile(file);//Delete function
+			case 3: DeleteFile(File);//Delete function
 
 				break;
 			default:
@@ -132,12 +132,12 @@ void Explore::Search(std::string Directory, std::string Name) {
 
 
 			break;
-			//return file properties
+			//return File properties
 		}
-		if (file.is_directory()) {	//concern that the program will direct to the folder, then not exit the folder and look for next. 
-			std::cout << "Searching " << file.path() << "..." << std::endl;
-			std::cout << file.path() << "Failed" << std::endl;
-			Search(file.path().string(), Name);
+		if (File.is_directory()) {	//concern that the program will direct to the folder, then not exit the folder and look for next. 
+			std::cout << "Searching " << File.path() << "..." << std::endl;
+			std::cout << File.path() << "	Failed" << std::endl;
+			Search(File.path(), Name);
 
 		}
 	}
@@ -178,7 +178,7 @@ std::string Explore::dirSearch(std::string inputDir) {
 	for (const auto& entry : std::filesystem::directory_iterator(Desktop)) {		//https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 		std::cout << entry.path() << std::endl;
 	}
-	//add functionality to change properties of file specified by string input, removing file directory prefix from path to match string
+	//add functionality to change properties of File specified by string input, removing file directory prefix from path to match string
 	return Desktop;
 }
 
