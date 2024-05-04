@@ -25,7 +25,7 @@ void Explore::OpenFile(std::filesystem::path Directory) {
 
 	}
 	else {
-		std::cout << "File not found" << std::endl;
+		std::cout << "Cannot open file" << std::endl;
 		return;
 	}
 
@@ -94,21 +94,21 @@ void Explore::DeleteFile(std::filesystem::directory_entry Directory) {		//ADD SA
 	}
 }
 
-void Explore::Search(std::filesystem::path& Directory, std::string& Name) {
+void Explore::Search(const std::filesystem::path& Directory, std::string& Name) {
 	std::string FullDirectory;
 	int Input;
 	std::string InputString;
 	for (auto& File : std::filesystem::directory_iterator(Directory)) {
 		if (File.path().filename() == Name) {
 			std::cout << "Found " << File.path() << std::endl;
-			std::cout << "Properties|\n" "Size(bytes)" << std::filesystem::file_size(File) << std::endl;
-			std::cout << "Last modified" << std::filesystem::last_write_time(File) << std::endl;
+			std::cout << "Properties|\n" "Size(bytes) " << std::filesystem::file_size(File) << std::endl;
+			std::cout << "Last modified " << std::filesystem::last_write_time(File) << std::endl;
 
 			std::filesystem::path Path = File.path();
 			std::string Extension = Path.extension().string();
 			std::cout << "File type" << Extension << std::endl;
 
-			std::cout << "\nActions|\n 1. Open\n 2. Rename\n 3. Delete\n " << std::endl;
+			std::cout << "\nActions|\n 1. Open\n 2. Rename\n 3. Delete\n 4. Move\n" << std::endl;
 			std::cin >> Input;
 
 			switch (Input) {
@@ -135,8 +135,8 @@ void Explore::Search(std::filesystem::path& Directory, std::string& Name) {
 			//return File properties
 		}
 		if (File.is_directory()) {	//concern that the program will direct to the folder, then not exit the folder and look for next. 
-			std::cout << "Searching " << File.path() << "..." << std::endl;
-			std::cout << File.path() << "	Failed" << std::endl;
+//			std::cout << "Searching " << File.path() << "..." << std::endl;
+//			std::cout << File.path() << "	Failed" << std::endl;
 			Search(File.path(), Name);
 
 		}
@@ -273,10 +273,10 @@ void Explore::moveFile(std::filesystem::path filePath, std::string oldDir, std::
 	std::vector <std::string> subDirs;
 	std::vector <std::size_t> found;
 	//std::vector <std::size_t> found = oldDir.find("\\");
-	while (oldDir.find("\\")) {
+	while (oldDir.find("\\") != std::string::npos) {
 		found.push_back(oldDir.find("\\"));
 	}
-	for (int i{ 0 }; i < sizeof(found); i++) {
+	for (int i = 0; i < sizeof(found); i++) {
 		subDirs[i] = oldDir.substr(found[i], found[i + 2] - found[i]);	//wrong, subDirs[i] should be the substring between found places.
 	}
 	std::filesystem::rename(oldDir, newDir);

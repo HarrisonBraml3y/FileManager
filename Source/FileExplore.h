@@ -35,7 +35,7 @@ public:
 	std::string Cut(std::string strToCut);
 	void OpenFile(std::filesystem::path Directory);
 	void DeleteFile(std::filesystem::directory_entry Directory);
-	void Search(std::filesystem::path& Directory, std::string& Name);
+	void Search(const std::filesystem::path& Directory, std::string& Name);
 	void NewDirectory(std::string Prefix, std::string Name);
 	void ListContents(std::filesystem::path Directory);
 	std::string dirSearch(std::string inputDir);
@@ -44,6 +44,7 @@ public:
 	std::string Rename(std::string inputName);
 	void moveFile(std::filesystem::path filePath, std::string oldDir, std::string newDir);
 	int fileSize(std::filesystem::path path);
+
 
 
 
