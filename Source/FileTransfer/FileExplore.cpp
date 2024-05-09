@@ -269,16 +269,21 @@ void Explore::moveFile(std::filesystem::path filePath, std::string oldDir, std::
 	std::string subDir1;
 	std::string subDir2;
 	std::string subDir3;
-
+	std::size_t Pos = 0;
+	
 	std::vector <std::string> subDirs;
-	std::vector <std::size_t> found;
+	std::vector <std::string> found;
 	//std::vector <std::size_t> found = oldDir.find("\\");
-	while (oldDir.find("\\") != std::string::npos) {
-		found.push_back(oldDir.find("\\"));
+	while ((Pos = oldDir.find("\\", Pos)) != std::string::npos) {
+
+		std::string subDirectory = oldDir.substr(Pos, oldDir.find("\\", Pos + 1) - Pos);
+
+		found.push_back(subDirectory);
+		Pos++;
 	}
-	for (int i = 0; i < sizeof(found); i++) {
-		subDirs[i] = oldDir.substr(found[i], found[i + 2] - found[i]);	//wrong, subDirs[i] should be the substring between found places.
-	}
+
+
+
 	std::filesystem::rename(oldDir, newDir);
 }
 
