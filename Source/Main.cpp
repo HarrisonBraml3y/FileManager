@@ -6,18 +6,24 @@
 #include <format>
 #include <conio.h>
 
-#include "FileExplore.h"
+#include "Filetransfer/FileExplore.h"
+
 
 
 #define KEY_LEFT 75
 #define KEY_RIGHT 77
 #define KEY_ENTER 13
 
-
+std::filesystem::path FileToSend = "C:\\Users\\harri\\Desktop\\ToSend.txt";
+std::string Destination = "C:\\Users\\harri\\Desktop\\Destination";
 
 Explore Funcs;
-int main() {
+/*int main() {
 	int Instruction{};
+
+	//SendFile(Destination, FileToSend);
+
+
 
 	std::filesystem::path dirInput;
 	std::string fileName{};
@@ -70,3 +76,4 @@ int main() {
 
 
 }
+*/

@@ -1,9 +1,12 @@
 #include "FileExplore.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 
 
-
-
+#pragma comment(lib, "Ws2_32.lib")
+#define DEFAULT_PORT "27015"
+#define DEFAULT_BUFLEN 512
 
 std::string Explore::Cut(std::string strToCut) {
 	std::size_t Result{ strToCut.find_last_of("\\/") };
@@ -31,7 +34,7 @@ void Explore::OpenFile(std::filesystem::path Directory) {
 
 }
 
-void Explore::DeleteFile(std::filesystem::directory_entry Directory) {		//ADD SAFETY CHECK <CONFIRM> or <NO>
+void Explore::Delete(std::filesystem::directory_entry Directory) {		//ADD SAFETY CHECK <CONFIRM> or <NO>
 	std::string Choices[] = { "Yes", "No" };
 	int Choice = 0;
 	bool Selecting = true;
@@ -94,19 +97,25 @@ void Explore::DeleteFile(std::filesystem::directory_entry Directory) {		//ADD SA
 	}
 }
 
-void Explore::Search(const std::filesystem::path& Directory, std::string& Name) {
+std::filesystem::path Explore::Search(const std::filesystem::path& Directory, std::string& Name) {
+	std::string Destination = "C:\\Users\\harri\\Desktop\\Destination";
+
 	std::string FullDirectory;
 	int Input;
 	std::string InputString;
-	for (auto& File : std::filesystem::directory_iterator(Directory)) {
+	std::filesystem::path Path;
+	for (auto& File : std::filesystem::recursive_directory_iterator(Directory)) {
 		if (File.path().filename() == Name) {
 			std::cout << "Found " << File.path() << std::endl;
 			std::cout << "Properties|\n" "Size(bytes) " << std::filesystem::file_size(File) << std::endl;
 			std::cout << "Last modified " << std::filesystem::last_write_time(File) << std::endl;
 
-			std::filesystem::path Path = File.path();
+			Path = File.path();
 			std::string Extension = Path.extension().string();
 			std::cout << "File type" << Extension << std::endl;
+
+			ToSend = Path;
+			ToSendSize = Name;
 
 			std::cout << "\nActions|\n 1. Open\n 2. Rename\n 3. Delete\n 4. Move\n" << std::endl;
 			std::cin >> Input;
@@ -122,9 +131,20 @@ void Explore::Search(const std::filesystem::path& Directory, std::string& Name) 
 
 				break;
 
-			case 3: DeleteFile(File);//Delete function
+			case 3: Delete(File);//Delete function
 
 				break;
+
+			case 4:
+				//if (SendFile(Destination, Path)) {
+				//	std::cout << "File sent." << std::endl;
+				//}
+				//else {
+				//	std::cout << "Failed to send file." << std::endl;
+				//}
+				break;
+
+
 			default:
 				std::cout << "Invalid input" << std::endl;
 				break;
@@ -135,12 +155,13 @@ void Explore::Search(const std::filesystem::path& Directory, std::string& Name) 
 			//return File properties
 		}
 		if (File.is_directory()) {	//concern that the program will direct to the folder, then not exit the folder and look for next. 
-//			std::cout << "Searching " << File.path() << "..." << std::endl;
-//			std::cout << File.path() << "	Failed" << std::endl;
+			std::cout << "Searching " << File.path() << "..." << std::endl;
+			std::cout << File.path() << "	Failed" << std::endl;
 			Search(File.path(), Name);
 
 		}
 	}
+	return Path;
 }
 
 void Explore::NewDirectory(std::string Prefix, std::string Name) {
@@ -291,3 +312,4 @@ int Explore::fileSize(std::filesystem::path path) {
 	std::cout << "        Size: " << std::filesystem::file_size(path) << std::endl;
 	return std::filesystem::file_size(path);
 }
+

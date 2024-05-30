@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <format>
 #include <conio.h>
+//#include "Client.h"
 
 
 #define KEY_LEFT 75
@@ -34,8 +35,10 @@ public:
 
 	std::string Cut(std::string strToCut);
 	void OpenFile(std::filesystem::path Directory);
-	void DeleteFile(std::filesystem::directory_entry Directory);
-	void Search(const std::filesystem::path& Directory, std::string& Name);
+	void Delete(std::filesystem::directory_entry Directory);
+	std::filesystem::path Search(const std::filesystem::path& Directory, std::string& Name);
+	std::filesystem::path ToSend;
+	std::string ToSendSize = "C:\\Users\\harri\\Desktop\\ToSend.txt";
 	void NewDirectory(std::string Prefix, std::string Name);
 	void ListContents(std::filesystem::path Directory);
 	std::string dirSearch(std::string inputDir);
