@@ -11,4 +11,4 @@
 
 
 
-//bool SendFile(const std::string& Destination, const std::filesystem::path& File);
+//bool SendFile(const char* ServerAddress, const char* FilePath);

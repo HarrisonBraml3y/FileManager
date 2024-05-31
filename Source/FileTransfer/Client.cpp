@@ -13,13 +13,15 @@
 
 
 
-int __cdecl main(int argc, char** argv){
+bool SendFile(const char* ServerAddress, const char* FilePath){
 
+	std::ifstream File();
     WSADATA WsaData;
 	int recvbuflen = DEFAULT_BUFLEN;
-	const char* sendbuf = "Test";
+	char* sendbuf = "Test";
 	char recvbuf[DEFAULT_BUFLEN];
 	int initResult;
+	std::ifstream FileIn(FilePath, std::ios::binary);
 
 	struct addrinfo* result = NULL, * ptr = NULL, Hints;
 
@@ -28,6 +30,11 @@ int __cdecl main(int argc, char** argv){
 	if (argc != 2) {
 		printf("usage: %s server-name\n", argv[0]);
 		return 1;
+	}
+
+	if (!FileIn.is_open()) {
+		printf("Unable to open file: %s\n", FilePath);
+		return false;
 	}
 
 	// Initialize Winsock
@@ -45,7 +52,7 @@ int __cdecl main(int argc, char** argv){
 
 
 	//resolve server address & port     //error here 11001
-	initResult = getaddrinfo(argv[1], DEFAULT_PORT, &Hints, &result);
+	initResult = getaddrinfo(ServerAddress, DEFAULT_PORT, &Hints, &result);
 	if (initResult != 0) {
 		printf("getaddrinfo failed: %d\n", initResult);
 		WSACleanup();
@@ -83,46 +90,33 @@ int __cdecl main(int argc, char** argv){
 	}
 
 
+	//Send file
+	int FileNameSize = (int)strlen(FilePath);
+	int SendResult = send(ConnectSocket, (char*)&FileNameSize, sizeof(FileNameSize), 0);
+	if (SendResult == SOCKET_ERROR) {
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(ConnectSocket);
+		WSACleanup();
+		return false;
+	}
 
-	//Get file to send
-	//use Search functiont to check if exists first.
-	//ExploreFuncs.Search()
-	//std::ifstream FileToSend(File, std::ios::binary);
-    
-	//if (!FileToSend) {
-	//	std::cerr << "Failed to open file: " << File << std::endl;
-	//	closesocket(ConnectSocket);
-	//	WSACleanup();
-	//	return false;
-	//}
-    //std::string FileName = File.filename().string();
-	//int FileNameSize = static_cast<int>(FileName.size());
-	//initResult = send(ConnectSocket, reinterpret_cast<const char*>(&FileNameSize), sizeof(FileNameSize), 0);
-	//if (initResult == SOCKET_ERROR) {
-	//	printf("send failed: %d\n", WSAGetLastError());
-	//	closesocket(ConnectSocket);
-	//	WSACleanup();
-	//	return false;
-	//}
-    //
-	//initResult = send(ConnectSocket, FileName.c_str(), FileNameSize, 0);
-	//if (initResult == SOCKET_ERROR) {
-	//	printf("send failed: %d\n", WSAGetLastError());
-	//	closesocket(ConnectSocket);
-	//	WSACleanup();
-	//	return false;
-	//}
-    //
-	//while (FileToSend.read(recvbuf, recvbuflen) || FileToSend.gcount() > 0) {
-	//	initResult = send(ConnectSocket, recvbuf, static_cast<int>(FileToSend.gcount()), 0);
-	//	if (initResult == SOCKET_ERROR) {
-	//		printf("send failed: %d\n", WSAGetLastError());
-	//		closesocket(ConnectSocket);
-	//		WSACleanup();
-	//		return false;
-	//	}
-	//}
+	SendResult = send(ConnectSocket, FilePath, FileNameSize, 0);
+	if (SendResult == SOCKET_ERROR) {
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(ConnectSocket);
+		WSACleanup();
+		return false;
+	}
 
+	while (FileIn.read(sendbuf, DEFAULT_BUFLEN)) {
+		SendResult = send(ConnectSocket, sendbuf, (int)FileIn.gcount(), 0);
+		if (SendResult == SOCKET_ERROR) {
+			printf("send failed with error: %d\n", WSAGetLastError());
+			closesocket(ConnectSocket);
+			WSACleanup();
+			return false;
+		}
+	}
 
 
 

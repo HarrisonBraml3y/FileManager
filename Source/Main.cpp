@@ -18,7 +18,7 @@ std::filesystem::path FileToSend = "C:\\Users\\harri\\Desktop\\ToSend.txt";
 std::string Destination = "C:\\Users\\harri\\Desktop\\Destination";
 
 Explore Funcs;
-/*int main() {
+/*int main(int argc, char** argv) {
 	int Instruction{};
 
 	//SendFile(Destination, FileToSend);
