@@ -11,4 +11,4 @@
 
 
 
-//bool SendFile(const char* ServerAddress, const char* FilePath);
+bool SendFile(const char* ServerAddress, const char* FilePath);
